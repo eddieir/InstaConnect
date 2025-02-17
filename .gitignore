@@ -1,0 +1,11 @@
+# Ignore virtual environment folder
+insta_env/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore package-lock.json
+package-lock.json
+

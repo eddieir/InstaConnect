@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InstaConnect Bot</title>
+    <title>Dashboard - InstaConnect Bot</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <div class="text-center">
-            <h1 class="display-4">Welcome to InstaConnect Bot</h1>
-            <p class="lead">Boost your Instagram presence by sending messages, increasing likes, follows, and comments with ease.</p>
-            <hr class="my-4">
-            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg mx-2">Login</a>
+        <h1 class="text-center">Dashboard</h1>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('send_message') }}" class="btn btn-primary btn-lg mx-2">Send Message</a>
+            <a href="{{ url_for('increase_reach') }}" class="btn btn-secondary btn-lg mx-2">Increase Reach</a>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
