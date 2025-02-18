@@ -4,48 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Increase Reach - InstaConnect Bot</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f8ff;
+        }
+        .form-container {
+            border-radius: 16px;
+            padding: 35px;
+            background-color: #ffffff;
+            box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        .form-container:hover {
+            transform: translateY(-5px);
+        }
+        label {
+            font-weight: 600;
+            color: #444;
+        }
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #cdd6e1;
+        }
+        .btn-secondary {
+            background-color: #6c63ff;
+            border-radius: 25px;
+            padding: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #5146d8;
+        }
+        h1 {
+            font-weight: 800;
+            color: #4a47a3;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Increase Reach</h1>
-        <div class="form-container mt-4 p-4 bg-light rounded shadow-sm">
+        <h1 class="text-center">📊 Boost Your Reach</h1>
+        <div class="form-container mt-4">
             <form action="{{ url_for('increase_reach') }}" method="post">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="username">Instagram Username:</label>
                     <input type="text" class="form-control" id="username" name="username" placeholder="Enter your Instagram username" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="password">Instagram Password:</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Enter your Instagram password" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="hashtags">Hashtags (comma separated):</label>
-                    <input type="text" class="form-control" id="hashtags" name="hashtags" placeholder="Enter hashtags" required>
+                    <input type="text" class="form-control" id="hashtags" name="hashtags" placeholder="e.g., #marketing, #growth" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="like_amount">Number of Posts to Like:</label>
                     <input type="number" class="form-control" id="like_amount" name="like_amount" value="10" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="follow_amount">Number of Users to Follow:</label>
                     <input type="number" class="form-control" id="follow_amount" name="follow_amount" value="10" required>
                 </div>
-                <div class="form-group">
-                    <label for="comment">Comment:</label>
-                    <input type="text" class="form-control" id="comment" name="comment" placeholder="Enter your comment">
+                <div class="mb-3">
+                    <label for="comment">Comment (optional):</label>
+                    <input type="text" class="form-control" id="comment" name="comment" placeholder="Enter a comment">
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="comment_amount">Number of Posts to Comment On:</label>
                     <input type="number" class="form-control" id="comment_amount" name="comment_amount" value="10" required>
                 </div>
-                <button type="submit" class="btn btn-secondary btn-block">Increase Reach</button>
+                <button type="submit" class="btn btn-secondary w-100">🚀 Increase Reach</button>
             </form>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
