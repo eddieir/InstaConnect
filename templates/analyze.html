@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze Instagram Handle - InstaConnect Bot</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Analyze Instagram Handle</h1>
+        <div class="form-container mt-4 p-4 bg-light rounded shadow-sm">
+            <form action="{{ url_for('analyze') }}" method="post">
+                <div class="form-group">
+                    <label for="handle">Instagram Handle:</label>
+                    <input type="text" class="form-control" id="handle" name="handle" placeholder="Enter Instagram handle" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Analyze</button>
+            </form>
+        </div>
+        {% if analytics %}
+        <div class="mt-5">
+            <h2 class="text-center">Analytics for @{{ handle }}</h2>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Followers:</strong> {{ analytics.followers }}</li>
+                <li class="list-group-item"><strong>Following:</strong> {{ analytics.following }}</li>
+                <li class="list-group-item"><strong>Posts:</strong> {{ analytics.posts }}</li>
+                <li class="list-group-item"><strong>Engagement Rate:</strong> {{ analytics.engagement_rate }}</li>
+                <li class="list-group-item"><strong>Average Likes:</strong> {{ analytics.average_likes }}</li>
+                <li class="list-group-item"><strong>Average Comments:</strong> {{ analytics.average_comments }}</li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

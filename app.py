@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -22,6 +22,23 @@ class User(db.Model):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+def get_trending_hashtags():
+    # This function should return a list of trending hashtags
+    # For simplicity, let's use a static list
+    return ['#love', '#instagood', '#photooftheday', '#fashion', '#beautiful', '#happy', '#cute', '#tbt', '#like4like', '#followme']
+
+def analyze_instagram_handle(handle):
+    # This function should return analytics data for the given Instagram handle
+    # For simplicity, let's use static data
+    return {
+        'followers': 12345,
+        'following': 678,
+        'posts': 234,
+        'engagement_rate': '5.6%',
+        'average_likes': 456,
+        'average_comments': 78
+    }
 
 @app.route('/')
 def index():
@@ -120,6 +137,19 @@ def increase_reach():
         return redirect(url_for('dashboard'))
 
     return render_template('increase_reach.html')
+
+@app.route('/trending_hashtags', methods=['GET'])
+def trending_hashtags():
+    hashtags = get_trending_hashtags()
+    return jsonify(hashtags)
+
+@app.route('/analyze', methods=['GET', 'POST'])
+def analyze():
+    if request.method == 'POST':
+        handle = request.form['handle']
+        analytics = analyze_instagram_handle(handle)
+        return render_template('analyze.html', handle=handle, analytics=analytics)
+    return render_template('analyze.html')
 
 if __name__ == '__main__':
     if not os.path.exists('instance'):

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - InstaConnect Bot</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -48,13 +49,15 @@
 </head>
 <body>
     <div class="container mt-5">
-        <div class="dashboard-container text-center">
-            <h1>🌟 Welcome to Your InstaConnect Dashboard</h1>
-            <div class="mt-4">
-                <a href="{{ url_for('send_message') }}" class="btn btn-primary btn-lg mx-2">💬 Smart Messaging</a>
-                <a href="{{ url_for('increase_reach') }}" class="btn btn-secondary btn-lg mx-2">📊 Increase Reach</a>
-            </div>
+        <h1 class="text-center">Dashboard</h1>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('send_message') }}" class="btn btn-primary btn-lg mx-2">Send Message</a>
+            <a href="{{ url_for('increase_reach') }}" class="btn btn-secondary btn-lg mx-2">Increase Reach</a>
+            <a href="{{ url_for('analyze') }}" class="btn btn-info btn-lg mx-2">Analyze Instagram Handle</a>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
