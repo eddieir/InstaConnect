@@ -3,15 +3,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os
+import requests  # Assuming we use requests to fetch data from an API
 from bot.insta_bot import InstaBot
-
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.abspath('instance/insta_connect.sqlite')}"
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "instance", "insta_connect.sqlite")}'
 
 db = SQLAlchemy(app)
 
@@ -28,9 +27,10 @@ def get_trending_hashtags():
     # For simplicity, let's use a static list
     return ['#love', '#instagood', '#photooftheday', '#fashion', '#beautiful', '#happy', '#cute', '#tbt', '#like4like', '#followme']
 
-def analyze_instagram_handle(handle):
-    # This function should return analytics data for the given Instagram handle
+def fetch_instagram_analytics(handle):
+    # This function should fetch real-time analytics data for the given Instagram handle
     # For simplicity, let's use static data
+    # In a real implementation, you would use the Instagram Graph API or a third-party service
     return {
         'followers': 12345,
         'following': 678,
@@ -147,7 +147,7 @@ def trending_hashtags():
 def analyze():
     if request.method == 'POST':
         handle = request.form['handle']
-        analytics = analyze_instagram_handle(handle)
+        analytics = fetch_instagram_analytics(handle)
         return render_template('analyze.html', handle=handle, analytics=analytics)
     return render_template('analyze.html')
 
