@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, set_access_cookies, unset_jwt_cookies
+from flask_bcrypt import Bcrypt
 import os
-import requests  # Assuming we use requests to fetch data from an API
+import re
+from datetime import timedelta
 from bot.insta_bot import InstaBot
 
 app = Flask(__name__)
@@ -11,8 +14,14 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.abspath('instance/insta_connect.sqlite')}"
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
+app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
 db = SQLAlchemy(app)
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -23,14 +32,9 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 def get_trending_hashtags():
-    # This function should return a list of trending hashtags
-    # For simplicity, let's use a static list
     return ['#love', '#instagood', '#photooftheday', '#fashion', '#beautiful', '#happy', '#cute', '#tbt', '#like4like', '#followme']
 
 def fetch_instagram_analytics(handle):
-    # This function should fetch real-time analytics data for the given Instagram handle
-    # For simplicity, let's use static data
-    # In a real implementation, you would use the Instagram Graph API or a third-party service
     return {
         'followers': 12345,
         'following': 678,
@@ -39,6 +43,17 @@ def fetch_instagram_analytics(handle):
         'average_likes': 456,
         'average_comments': 78
     }
+
+def validate_password(password):
+    if len(password) < 8 or len(password) > 20:
+        return False
+    if not re.search(r'[A-Za-z]', password):
+        return False
+    if not re.search(r'[0-9]', password):
+        return False
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+    return True
 
 @app.route('/')
 def index():
@@ -49,11 +64,14 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        if not validate_password(password):
+            flash('Password must be 8-20 characters long, include letters, numbers, and special characters.')
+            return redirect(url_for('register'))
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             flash('Username already exists')
         else:
-            hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
             new_user = User(username=username, password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
@@ -67,23 +85,31 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            return redirect(url_for('dashboard'))
+        if user and bcrypt.check_password_hash(user.password, password):
+            access_token = create_access_token(identity={'username': user.username}, expires_delta=timedelta(minutes=15))
+            response = make_response(redirect(url_for('dashboard')))
+            set_access_cookies(response, access_token)
+            return response
         else:
             flash('Invalid username or password')
+            return redirect(url_for('login'))
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    response = make_response(redirect(url_for('index')))
+    unset_jwt_cookies(response)
+    return response
+
 @app.route('/dashboard')
+@jwt_required()
 def dashboard():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return render_template('dashboard.html')
+    current_user = get_jwt_identity()
+    return render_template('dashboard.html', user=current_user)
 
 @app.route('/send_message', methods=['GET', 'POST'])
+@jwt_required()
 def send_message():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -115,9 +141,8 @@ def send_message():
     return render_template('send_message.html')
 
 @app.route('/increase_reach', methods=['GET', 'POST'])
+@jwt_required()
 def increase_reach():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
