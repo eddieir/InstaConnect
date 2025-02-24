@@ -1,28 +1,17 @@
-const { chromium } = require('playwright');
+const { test, expect } = require('@playwright/test');
 
-(async () => {
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
+test('Send Message page should allow user to send a message', async ({ page }) => {
+  await page.goto('http://localhost:5000/send_message');
 
-  // Navigate to the Send Message page
-  await page.goto('http://127.0.0.1:5000/send_message');
-  await page.waitForSelector('h1.text-center');
-  const sendMessageTitle = await page.textContent('h1.text-center');
-  console.log('Send Message Page Title:', sendMessageTitle);
+  // Fill out the send message form
+  await page.fill('input[name="username"]', 'testuser');
+  await page.fill('input[name="password"]', 'password123');
+  await page.fill('textarea[name="message"]', 'Hello, this is a test message.');
+  await page.fill('input[name="hashtags"]', '#test, #playwright');
 
-  // Fill out the Send Message form
-  await page.fill('#username', 'test_username');
-  await page.fill('#password', 'test_password');
-  await page.fill('#message', 'Hello, this is a test message.');
-  await page.fill('#hashtags', 'test,hashtag');
-  // Note: Skipping file upload for simplicity
+  // Submit the form
+  await page.click('button[type="submit"]');
 
-  // Submit the form and wait for navigation
-  await Promise.all([
-    page.waitForNavigation({ waitUntil: 'load' }),
-    page.click('button[type="submit"]')
-  ]);
-
-  await browser.close();
-})();
+  // Check if the message was sent successfully
+  await expect(page).toHaveURL('http://localhost:5000/dashboard');
+});
